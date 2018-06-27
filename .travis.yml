@@ -1,4 +1,7 @@
 ---
+before_install:
+  - 'sudo pip install bashate'
 language: 'bash'
 script:
-  - 'shellcheck lib/*'
+  - 'shellcheck lib/*.sh'
+  - 'bashate --ignore E003 lib/*.sh'
