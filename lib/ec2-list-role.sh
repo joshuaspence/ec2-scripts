@@ -42,6 +42,9 @@ if [[ ${#FILTERS[@]} == 0 ]]; then
   exit 1
 fi
 
+# Ensure that AWS CLI outputs JSON.
+AWS_OPTS+=('--output json')
+
 # Only include running instances.
 FILTERS+=('Name=instance-state-name,Values=running')
 
