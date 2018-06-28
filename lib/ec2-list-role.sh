@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC2068
 
 set -o errexit
 set -o nounset
@@ -42,12 +41,14 @@ if [[ ${#FILTERS[@]} == 0 ]]; then
   exit 1
 fi
 
-# Ensure that AWS CLI outputs JSON.
-AWS_OPTS+=('--output json')
-
 # Only include running instances.
 FILTERS+=('Name=instance-state-name,Values=running')
 
-echo -e 'Instance ID\t\tPublic IP\tPrivate IP\tName'
-aws ${AWS_OPTS[@]} ec2 describe-instances --filters ${FILTERS[@]} | \
-jq --raw-output --exit-status '.Reservations[].Instances[] | "\(.InstanceId)\t\(if .PublicIpAddress != null then .PublicIpAddress else "N/A            " end)\t\(.PrivateIpAddress)\t\(.Tags[] | select(.Key == "Name") | .Value)"'
+# shellcheck disable=SC2016,SC2068
+aws ${AWS_OPTS[@]} \
+  --output table \
+  --color off \
+  ec2 describe-instances \
+  --filters ${FILTERS[@]} \
+  --query 'Reservations[*].Instances[*].{ID:InstanceId, "Public IP": PublicIpAddress, "Private IP": PrivateIpAddress, Name: Tags[?Key==`Name`] | [0].Value}' \
+| tail --lines=+3
