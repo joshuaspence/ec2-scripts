@@ -35,6 +35,7 @@ if [[ $# != 1 ]]; then
   exit 1
 fi
 
+SSH_OPTS+=('-o LogLevel=ERROR')
 SSH_OPTS+=('-o StrictHostKeyChecking=no')
 SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
 
