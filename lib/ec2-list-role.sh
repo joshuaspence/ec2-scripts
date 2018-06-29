@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2068
 
 set -o errexit
 set -o nounset
@@ -44,7 +45,7 @@ fi
 # Only include running instances.
 FILTERS+=('Name=instance-state-name,Values=running')
 
-# shellcheck disable=SC2016,SC2068
+# shellcheck disable=SC2016
 aws ${AWS_OPTS[@]} \
   --output table \
   --color off \
