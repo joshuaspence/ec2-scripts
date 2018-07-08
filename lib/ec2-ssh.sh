@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC2029
 
 set -o errexit
 set -o nounset
@@ -60,4 +59,5 @@ if [[ -n $JUMPHOST ]]; then
 fi
 
 set -x
+# shellcheck disable=SC2029
 ssh "${SSH_OPTS[@]}" "${HOSTNAME}"
