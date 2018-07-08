@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC2068
 
 set -o errexit
 set -o nounset
@@ -14,7 +13,7 @@ eval set -- "$(getopt --longoptions aws-profile:,aws-region:,environment:,produc
 while true; do
   case $1 in
     --aws-*)
-      AWS_OPTS+=("--${1#--aws-} ${2}")
+      AWS_OPTS+=("--${1#--aws-}=${2}")
       shift 2
       ;;
 
@@ -46,10 +45,10 @@ fi
 FILTERS+=('Name=instance-state-name,Values=running')
 
 # shellcheck disable=SC2016
-aws ${AWS_OPTS[@]} \
+aws "${AWS_OPTS[@]}" \
   --output table \
   --color off \
   ec2 describe-instances \
-  --filters ${FILTERS[@]} \
+  --filters "${FILTERS[@]}" \
   --query 'Reservations[*].Instances[*].{ID:InstanceId, "Public IP": PublicIpAddress, "Private IP": PrivateIpAddress, Name: Tags[?Key==`Name`] | [0].Value}' \
 | tail --lines=+3
