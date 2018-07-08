@@ -30,6 +30,11 @@ while true; do
   esac
 done
 
+if [[ ${#AWS_OPTS[@]} == 0 ]]; then
+  echo 'No AWS options were specified.' >&2
+  exit 1
+fi
+
 if [[ $# != 1 ]]; then
   echo 'Exactly one instance ID must be specified.' >&2
   exit 1
