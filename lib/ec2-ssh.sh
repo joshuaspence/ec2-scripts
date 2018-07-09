@@ -28,4 +28,5 @@ if [[ -n $JUMPHOST ]]; then
 fi
 
 (( VERBOSE )) && set -x
+# shellcheck disable=SC2029
 ssh "${SSH_OPTS[@]}" "${HOSTNAME}" -- "$@"
