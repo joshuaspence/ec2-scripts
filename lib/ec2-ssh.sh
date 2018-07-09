@@ -8,11 +8,6 @@ if [[ $# != 1 ]]; then
   exit 1
 fi
 
-SSH_OPTS=()
-SSH_OPTS+=('-o LogLevel=ERROR')
-SSH_OPTS+=('-o StrictHostKeyChecking=no')
-SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
-
 # Query the specified instance.
 readonly INSTANCE=$(aws "${AWS_OPTS[@]}" --output json ec2 describe-instances --instance-ids "$1" --query 'Reservations[0].Instances[0]')
 readonly HOSTNAME=$(echo "${INSTANCE}" | jq --raw-output --exit-status 'if .PublicDnsName != "" then .PublicDnsName else .PrivateDnsName end')

@@ -29,11 +29,6 @@ PSSH_OPTS+=('--option=LogLevel=ERROR')
 PSSH_OPTS+=('--option=StrictHostKeyChecking=no')
 PSSH_OPTS+=('--option=UserKnownHostsFile=/dev/null')
 
-SSH_OPTS=()
-SSH_OPTS+=('-o LogLevel=ERROR')
-SSH_OPTS+=('-o StrictHostKeyChecking=no')
-SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
-
 # Find the jumphost
 # Discover the VPC jumphost.
 #

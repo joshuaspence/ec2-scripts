@@ -39,3 +39,9 @@ if [[ ${#AWS_OPTS[@]} == 0 ]]; then
   echo 'No AWS options were specified.' >&2
   exit 1
 fi
+
+# Set common SSH options.
+SSH_OPTS=()
+SSH_OPTS+=('-o LogLevel=ERROR')
+SSH_OPTS+=('-o StrictHostKeyChecking=no')
+SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
