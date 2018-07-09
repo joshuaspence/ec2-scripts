@@ -12,13 +12,8 @@ fi
 readonly INSTANCE=$(aws "${AWS_OPTS[@]}" --output json ec2 describe-instances --instance-ids "$1" --query 'Reservations[0].Instances[0]')
 readonly HOSTNAME=$(echo "${INSTANCE}" | jq --raw-output --exit-status 'if .PublicDnsName != "" then .PublicDnsName else .PrivateDnsName end')
 
-# Discover the VPC jumphost.
-#
-# TODO: This would be easier if `aws elb describe-load-balancers` provided a
-# `--filters` flag, similar to `aws ec2 describe-instances`.
 readonly VPC_ID=$(echo "${INSTANCE}" | jq --raw-output --exit-status '.VpcId')
-readonly JUMPHOST_SG=$(aws "${AWS_OPTS[@]}" --output text ec2 describe-security-groups --filters 'Name=tag:Name,Values=jumphost_lb' 'Name=tag:role,Values=jumphost' "Name=vpc-id,Values=${VPC_ID}" --query 'SecurityGroups[0].GroupId')
-readonly JUMPHOST=$(aws "${AWS_OPTS[@]}" --output json elb describe-load-balancers | jq --arg jumphost_sg "${JUMPHOST_SG}" --raw-output --exit-status '.LoadBalancerDescriptions[] | select(.SecurityGroups[] | contains($jumphost_sg)) | .DNSName')
+readonly JUMPHOST=$(find_jumphost "${VPC_ID}")
 if [[ -n $JUMPHOST ]]; then
   SSH_OPTS+=("-o ProxyCommand=ssh ${SSH_OPTS[*]} -W %h:%p ${JUMPHOST}")
 fi

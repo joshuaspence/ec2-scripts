@@ -48,3 +48,28 @@ SSH_OPTS=()
 SSH_OPTS+=('-o LogLevel=ERROR')
 SSH_OPTS+=('-o StrictHostKeyChecking=no')
 SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
+
+# Find a jumphost for the specified VPC.
+#
+# TODO: This would be easier if `aws elb describe-load-balancers` provided a
+# `--filters` flag, similar to `aws ec2 describe-instances`.
+function find_jumphost() {
+  local -r JUMPHOST_SG=$(
+    aws \
+      "${AWS_OPTS[@]}" --output text \
+      ec2 describe-security-groups \
+      --filters \
+        'Name=tag:Name,Values=jumphost_lb' \
+        'Name=tag:role,Values=jumphost' \
+        "Name=vpc-id,Values=${1}" \
+      --query 'SecurityGroups[0].GroupId'
+  )
+
+  aws \
+    "${AWS_OPTS[@]}" --output json \
+    elb describe-load-balancers \
+    | jq \
+      --arg jumphost_sg "${JUMPHOST_SG}" \
+      --raw-output --exit-status \
+      '.LoadBalancerDescriptions[] | select(.SecurityGroups[] | contains($jumphost_sg)) | .DNSName'
+}
