@@ -9,9 +9,6 @@ if [[ $# == 0 ]]; then
   exit 1
 fi
 
-# Only include running instances.
-FILTERS+=('Name=instance-state-name,Values=running')
-
 # Query the specified instances.
 readonly INSTANCES=$(aws "${AWS_OPTS[@]}" --output json ec2 describe-instances --filters "${FILTERS[@]}" --query 'Reservations[*].Instances[0]')
 readonly VPC_ID=$(echo "${INSTANCES}" | jq --raw-output --exit-status '.[].VpcId' | sort | uniq)

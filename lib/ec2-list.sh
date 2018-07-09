@@ -4,9 +4,6 @@
 OPTIONS='environment:,product:,profile:,role:,stack:'
 source "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")/common.sh"
 
-# Only include running instances.
-FILTERS+=('Name=instance-state-name,Values=running')
-
 # shellcheck disable=SC2016
 aws "${AWS_OPTS[@]}" \
   --output table \

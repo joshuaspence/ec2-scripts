@@ -40,6 +40,9 @@ if [[ ${#AWS_OPTS[@]} == 0 ]]; then
   exit 1
 fi
 
+# Only include running instances.
+FILTERS+=('Name=instance-state-name,Values=running')
+
 # Set common SSH options.
 SSH_OPTS=()
 SSH_OPTS+=('-o LogLevel=ERROR')
