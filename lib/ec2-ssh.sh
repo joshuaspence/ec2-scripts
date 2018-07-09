@@ -3,17 +3,15 @@
 # shellcheck source=lib/common.sh
 source "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")/common.sh"
 
-if [[ $# != 1 ]]; then
-  echo 'Exactly one instance ID must be specified.' >&2
-  exit 1
-fi
+readonly INSTANCE_ID="$1"
+shift
 
 # Query the specified instance.
 readonly INSTANCE=$(
   aws \
     "${AWS_OPTS[@]}" --output json \
     ec2 describe-instances \
-    --instance-ids "$1" \
+    --instance-ids "${INSTANCE_ID}" \
     --query 'Reservations[0].Instances[0]'
   )
 readonly HOSTNAME=$(
@@ -30,5 +28,4 @@ if [[ -n $JUMPHOST ]]; then
 fi
 
 set -x
-# shellcheck disable=SC2029
-ssh "${SSH_OPTS[@]}" "${HOSTNAME}"
+ssh "${SSH_OPTS[@]}" "${HOSTNAME}" -- "$@"
