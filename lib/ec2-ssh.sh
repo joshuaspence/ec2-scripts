@@ -27,5 +27,5 @@ if [[ -n $JUMPHOST ]]; then
   SSH_OPTS+=("-o ProxyCommand=ssh ${SSH_OPTS[*]} -W %h:%p ${JUMPHOST}")
 fi
 
-set -x
+(( VERBOSE )) && set -x
 ssh "${SSH_OPTS[@]}" "${HOSTNAME}" -- "$@"

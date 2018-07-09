@@ -52,7 +52,7 @@ mapfile -t HOSTS < <(
     '.[] | "--host=" + if .PublicDnsName != "" then .PublicDnsName else .PrivateDnsName end'
 )
 
-set -x
+(( VERBOSE )) && set -x
 pssh \
   "${HOSTS[@]}" \
   --timeout=0 \

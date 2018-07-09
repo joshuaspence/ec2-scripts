@@ -11,9 +11,8 @@ done
 # Find the path to `ec2-ssh`.
 readonly EC2_SSH=$(readlink --canonicalize "$(dirname "${BASH_SOURCE[0]}")/../bin/ec2-ssh")
 
-set -x
+(( VERBOSE )) && set -x
 rsync \
-  --verbose \
   --archive \
   --delete \
   --rsh "${EC2_SSH} ${AWS_OPTS[*]} --" \

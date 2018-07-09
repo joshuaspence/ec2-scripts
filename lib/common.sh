@@ -6,14 +6,21 @@ set -o pipefail
 
 AWS_OPTS=()
 FILTERS=()
+VERBOSE=0
 
-eval set -- "$(getopt --longoptions aws-profile:,aws-region: --longoptions "${OPTIONS:=}" --name "$0" --options '' -- "$@")"
+eval set -- "$(getopt --longoptions aws-profile:,aws-region:,verbose --longoptions "${OPTIONS:=}" --name "$0" --options '' -- "$@")"
 
 while true; do
   case $1 in
     --aws-*)
       AWS_OPTS+=("--${1#--aws-}=${2}")
       shift 2
+      ;;
+
+    --verbose)
+      # shellcheck disable=SC2034
+      VERBOSE=1
+      shift
       ;;
 
     # Just assume that any other provided flag, which isn't prefixed with
