@@ -10,10 +10,23 @@ if [[ $# == 0 ]]; then
 fi
 
 # Query the specified instances.
-readonly INSTANCES=$(aws "${AWS_OPTS[@]}" --output json ec2 describe-instances --filters "${FILTERS[@]}" --query 'Reservations[*].Instances[0]')
+readonly INSTANCES=$(
+  aws \
+    "${AWS_OPTS[@]}" --output json \
+    ec2 describe-instances \
+    --filters "${FILTERS[@]}" \
+    --query 'Reservations[*].Instances[0]'
+  )
 
 # Ensure that all instances are in the same VPC.
-mapfile -t VPC_ID < <(echo "${INSTANCES}" | jq --raw-output --exit-status '.[].VpcId' | sort | uniq)
+mapfile -t VPC_ID < <(
+  echo "${INSTANCES}" \
+  | jq \
+    --raw-output --exit-status \
+    '.[].VpcId' \
+  | sort \
+  | uniq
+)
 if [[ ${#VPC_ID[@]} -gt 1 ]]; then
   echo 'Instances must all reside in the same VPC.' >&2
   exit 1
@@ -32,7 +45,12 @@ if [[ -n $JUMPHOST ]]; then
 fi
 
 # shellcheck disable=SC2207
-HOSTS=($(echo "${INSTANCES}" | jq --raw-output --exit-status '.[] | "--host=" + if .PublicDnsName != "" then .PublicDnsName else .PrivateDnsName end'))
+HOSTS=($(
+  echo "${INSTANCES}" \
+  | jq \
+    --raw-output --exit-status \
+    '.[] | "--host=" + if .PublicDnsName != "" then .PublicDnsName else .PrivateDnsName end'
+))
 
 set -x
 pssh \
