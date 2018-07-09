@@ -1,44 +1,14 @@
 #!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
-
-AWS_OPTS=()
-SSH_OPTS=()
-
-# Read command-line flags.
-eval set -- "$(getopt --longoptions aws-profile:,aws-region: --name "$0" --options '' -- "$@")"
-
-while true; do
-  case $1 in
-    --aws-*)
-      AWS_OPTS+=("--${1#--aws-}=${2}")
-      shift 2
-      ;;
-
-    --)
-      shift
-      break
-      ;;
-
-    *)
-      echo "Not implemented: $1" >&2
-      exit 1
-      ;;
-  esac
-done
-
-if [[ ${#AWS_OPTS[@]} == 0 ]]; then
-  echo 'No AWS options were specified.' >&2
-  exit 1
-fi
+# shellcheck source=lib/common.sh
+source "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")/common.sh"
 
 if [[ $# != 1 ]]; then
   echo 'Exactly one instance ID must be specified.' >&2
   exit 1
 fi
 
+SSH_OPTS=()
 SSH_OPTS+=('-o LogLevel=ERROR')
 SSH_OPTS+=('-o StrictHostKeyChecking=no')
 SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
