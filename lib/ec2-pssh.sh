@@ -15,7 +15,7 @@ readonly INSTANCES=$(
     "${AWS_OPTS[@]}" --output json \
     ec2 describe-instances \
     --filters "${FILTERS[@]}" \
-    --query 'Reservations[*].Instances[0]'
+    --query 'Reservations[*].Instances[]'
   )
 
 # Ensure that all instances are in the same VPC.
