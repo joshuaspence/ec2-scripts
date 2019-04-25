@@ -20,7 +20,7 @@ readonly HOSTNAME=$(
     --raw-output --exit-status \
     'if .PublicDnsName != "" then .PublicDnsName else .PrivateDnsName end'
 )
-readonly VPC_ID=$(echo "${INSTANCE}" | jq --raw-output --exit-status '.VpcId')
+readonly VPC_ID=$(echo "${INSTANCE}" | jq --raw-output --exit-status '.VpcId // ""')
 
 readonly JUMPHOST=$(find_jumphost "${VPC_ID}")
 if [[ -n $JUMPHOST ]]; then

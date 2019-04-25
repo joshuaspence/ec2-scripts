@@ -61,6 +61,10 @@ SSH_OPTS+=('-o UserKnownHostsFile=/dev/null')
 # TODO: This would be easier if `aws elb describe-load-balancers` provided a
 # `--filters` flag, similar to `aws ec2 describe-instances`.
 function find_jumphost {
+  if [[ -z $1 ]]; then
+    return
+  fi
+
   local -r JUMPHOST_SG=$(
     aws \
       "${AWS_OPTS[@]}" --output text \
